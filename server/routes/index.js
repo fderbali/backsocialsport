@@ -35,7 +35,7 @@ router.post('/login', async (req, res, next) => {
 		if (result.length == 1) {
 			res.json({ 'success': true, 'message': `Bienvenue ${result[0].nom} ${result[0].prenom}` });
 		} else {
-			res.json({ 'success': false, 'message': `Adresse email pas trouvée` });
+			res.json({ 'success': false, 'message': `Mauvaises informations de connexion` });
 		}
 	} catch (e) {
 		res.json({ 'success': false, 'message': 'Une erreur s\'est produite, veuillez réessayer plus tard !' });
