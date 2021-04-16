@@ -45,6 +45,10 @@ class Membre extends DatabaseAccessObject {
 		 * @member {string}
 		 */
 		this.is_connected = undefined
+		/**
+		 * @member {string}
+		 */
+		this.sexe = undefined
 	}
 
 	/**
@@ -61,6 +65,8 @@ class Membre extends DatabaseAccessObject {
 		this.addValidator('date_de_naissance', new RequiredValidator())
 		this.addValidator('mot_de_passe', new RequiredValidator())
 		this.addValidator('mot_de_passe', new LengthValidator(0, 45))
+		this.addValidator('sexe', new RequiredValidator())
+		this.addValidator('sexe', new LengthValidator(0, 1))
 		this.addValidator('avatar', new LengthValidator(0, 255))
 		this.addValidator('is_public', new RequiredValidator())
 		this.addValidator('is_public', new LengthValidator(0, Number.POSITIVE_INFINITY))
@@ -73,7 +79,7 @@ class Membre extends DatabaseAccessObject {
 	 * @returns {string[]}
 	 */
 	static getAttributeNames() {
-		return ['id', 'nom', 'prenom', 'email', 'date_de_naissance', 'mot_de_passe', 'avatar', 'is_public', 'is_connected']
+		return ['id', 'nom', 'prenom', 'email', 'date_de_naissance', 'mot_de_passe', 'avatar', 'is_public', 'is_connected', 'sexe']
 	}
 
 	/**
