@@ -47,7 +47,6 @@ router.post('/addactivite', async (req, res, next) => {
 		// On cherche l'ID de l'utilisateur
 		let whereClause = new WhereClause('?? = ?', ['email', req.body.userConnected]); // will prepare params
 		let result = await Membre.find(whereClause);
-		console.log(result[0].id + "-----------");
 		if (result.length == 1) {
 			id_current_user = result[0].id;
 		}
@@ -57,7 +56,6 @@ router.post('/addactivite', async (req, res, next) => {
 		await organise.insert();
 		res.json({ 'success': true, 'insert_id': activite.id, 'message': 'Enregistrement effetuée avec succès' });
 	} catch (e) {
-		console.log(e);
 		res.json({ 'success': false, 'message': 'Une erreur s\'est produite, veuillez réessayer plus tard !' });
 	}
 });
@@ -67,7 +65,7 @@ router.post('/login', async (req, res, next) => {
 		let whereClause = new WhereClause('?? = ? AND ?? = ?', ['email', req.body.email, 'mot_de_passe', req.body.mot_de_passe]);
 		let result = await Membre.find(whereClause);
 		if (result.length == 1) {
-			res.json({ 'success': true, 'message': `Bienvenue ${result[0].nom} ${result[0].prenom}` });
+			res.json({ 'success': true, 'id': result[0].id, 'message': `Bienvenue ${result[0].nom} ${result[0].prenom}` });
 		} else {
 			res.json({ 'success': false, 'message': `Mauvaises informations de connexion` });
 		}
@@ -88,7 +86,6 @@ router.get("/membre/:id", async (req, res, next) => {
 	try {
 		let whereClause = new WhereClause('?? = ?', ['id', req.params.id]); // will prepare params
 		let result = await Membre.find(whereClause);
-		console.log(result[0]);
 		res.json(result[0]);
 	} catch (e) {
 		res.json({ 'success': false });
@@ -104,4 +101,22 @@ router.get("/categorie", async (req, res, next) => {
 	}
 });
 
+router.get("/activite", async (req, res, next) => {
+	try {
+		let results = await Activite.find();
+		res.json(results);
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
+router.get("/activite/:id", async (req, res, next) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id', req.params.id]); // will prepare params
+		let result = await Activite.find(whereClause);
+		res.json(result[0]);
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
 module.exports = router;
