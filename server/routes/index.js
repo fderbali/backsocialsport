@@ -3,6 +3,7 @@ const express = require('express');
 const Membre = require('../lib/Membre');
 const Activite = require('../lib/Activite');
 const Categorie = require('../lib/Categorie');
+const Organise = require('../lib/Organise');
 const router = express.Router();
 const WhereClause = require('./../../node_modules/sql-dao/lib/WhereClause.js');
 
@@ -42,6 +43,18 @@ router.post('/addactivite', async (req, res, next) => {
 		activite.fin = req.body.date_fin_activite;
 		activite.description = req.body.description;
 		await activite.insert();
+
+		// On cherche l'ID de l'utilisateur
+		let whereClause = new WhereClause('?? = ?', ['email', req.body.userConnected]); // will prepare params
+		let result = await Membre.find(whereClause);
+		console.log(result[0].id + "-----------");
+		if (result.length == 1) {
+			id_current_user = result[0].id;
+		}
+		let organise = new Organise();
+		organise.id_membre = id_current_user;
+		organise.id_activite = activite.id;
+		await organise.insert();
 		res.json({ 'success': true, 'insert_id': activite.id, 'message': 'Enregistrement effetuée avec succès' });
 	} catch (e) {
 		console.log(e);
