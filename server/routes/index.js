@@ -4,6 +4,7 @@ const Membre = require('../lib/Membre');
 const Activite = require('../lib/Activite');
 const Categorie = require('../lib/Categorie');
 const Organise = require('../lib/Organise');
+const Participe = require('../lib/Participe');
 const router = express.Router();
 const WhereClause = require('./../../node_modules/sql-dao/lib/WhereClause.js');
 
@@ -119,4 +120,35 @@ router.get("/activite/:id", async (req, res, next) => {
 		res.json({ 'success': false });
 	}
 });
+
+router.get("/membre/:id/activites", async (req, res, next) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id_membre', req.params.id]);
+		let result_id_activ = await Organise.find(whereClause);
+		let array_id_activite = [];
+		for (element of result_id_activ) {
+			array_id_activite.push(element.id_activite);
+		}
+		liste_id_activite = "(" + array_id_activite.join(",") + ")";
+		let whereClauseActivites = new WhereClause('id IN ' + liste_id_activite, []);
+		let activites = await Activite.find(whereClauseActivites);
+		res.json(activites);
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
+router.post("/membre/inscrire", async (req, res, next) => {
+	try {
+		let participe = new Participe();
+		participe.id_activite = req.body.id_activite;
+		participe.id_membre = req.body.id_membre;
+		await participe.insert();
+		res.json({ 'message': 'Vous êtes désormais enregistré pour cette activité !' });
+	} catch (e) {
+		console.log(e);
+		res.json({ 'message': 'Enregistrement échouée ! Veuillez re-essayer plus tard !' });
+	}
+});
+
 module.exports = router;
