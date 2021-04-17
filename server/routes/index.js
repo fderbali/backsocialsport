@@ -151,4 +151,18 @@ router.post("/membre/inscrire", async (req, res, next) => {
 	}
 });
 
+router.post("/membre/check_inscription", async (req, res) => {
+	try {
+		whereClause = new WhereClause('?? = ? AND ?? = ?', ['id_membre', req.body.id_membre, 'id_activite', req.body.id_activite]);
+		result = await Participe.find(whereClause);
+		if (result[0]) {
+			value_to_return = { 'subscribed': true };
+		} else {
+			value_to_return = { 'subscribed': false };
+		}
+		res.json(value_to_return);
+	} catch (e) {
+	}
+});
+
 module.exports = router;
