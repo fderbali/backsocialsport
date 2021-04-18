@@ -151,6 +151,19 @@ router.post("/membre/inscrire", async (req, res, next) => {
 	}
 });
 
+router.post("/membre/desinscrire", async (req, res, next) => {
+	try {
+		participe = new Participe();
+		participe.id_activite = req.body.id_activite;
+		participe.id_membre = req.body.id_membre;
+		await participe.delete();
+		res.json({ 'message': 'Vous êtes désormais désinscrit de cette activité !' });
+	} catch (e) {
+		console.log(e);
+		res.json({ 'message': 'Désinscription échouée ! Veuillez re-essayer plus tard !' });
+	}
+});
+
 router.post("/membre/check_inscription", async (req, res) => {
 	try {
 		whereClause = new WhereClause('?? = ? AND ?? = ?', ['id_membre', req.body.id_membre, 'id_activite', req.body.id_activite]);
