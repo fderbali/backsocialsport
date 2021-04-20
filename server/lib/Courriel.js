@@ -36,7 +36,7 @@ class Courriel extends DatabaseAccessObject {
 		/**
 		 * @member {string}
 		 */
-		this.courrielcol = undefined
+		this.courriel_lu = undefined
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Courriel extends DatabaseAccessObject {
 		this.addValidator('message', new LengthValidator(0, Number.POSITIVE_INFINITY))
 		this.addValidator('sujet', new RequiredValidator())
 		this.addValidator('sujet', new LengthValidator(0, 255))
-		this.addValidator('courrielcol', new LengthValidator(0, 45))
+		this.addValidator('courriel_lu', new LengthValidator(1, 1))
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Courriel extends DatabaseAccessObject {
 	 * @returns {string[]}
 	 */
 	static getAttributeNames() {
-		return ['id', 'id_expediteur', 'id_destinataire', 'date', 'message', 'sujet', 'courrielcol']
+		return ['id', 'id_expediteur', 'id_destinataire', 'date', 'message', 'sujet', 'courriel_lu']
 	}
 
 	/**

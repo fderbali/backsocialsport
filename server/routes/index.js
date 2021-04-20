@@ -5,6 +5,7 @@ const Activite = require('../lib/Activite');
 const Categorie = require('../lib/Categorie');
 const Organise = require('../lib/Organise');
 const Participe = require('../lib/Participe');
+const Courriel = require('../lib/Courriel');
 const router = express.Router();
 const WhereClause = require('./../../node_modules/sql-dao/lib/WhereClause.js');
 
@@ -57,6 +58,22 @@ router.post('/addactivite', async (req, res, next) => {
 		await organise.insert();
 		res.json({ 'success': true, 'insert_id': activite.id, 'message': 'Enregistrement effetuée avec succès' });
 	} catch (e) {
+		res.json({ 'success': false, 'message': 'Une erreur s\'est produite, veuillez réessayer plus tard !' });
+	}
+});
+
+router.post('/sendcourriel', async (req, res) => {
+	try {
+		let courriel = new Courriel();
+		courriel.sujet = req.body.sujet;
+		courriel.message = req.body.message;
+		courriel.date = req.body.date;
+		courriel.id_expediteur = req.body.id_expediteur;
+		courriel.id_destinataire = req.body.id_destinataire;
+		await courriel.insert();
+		res.json({ 'success': true, 'insert_id': courriel.id, 'message': 'Message effetuée avec succès' });
+	} catch (e) {
+		console.log(e);
 		res.json({ 'success': false, 'message': 'Une erreur s\'est produite, veuillez réessayer plus tard !' });
 	}
 });
@@ -121,6 +138,29 @@ router.get("/activite/:id", async (req, res, next) => {
 	}
 });
 
+router.get("/courriel/:id", async (req, res, next) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id', req.params.id]); // will prepare params
+		let result = await Courriel.find(whereClause);
+		res.json(result[0]);
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
+router.get("/courriel/:id/mark_as_read", async (req, res, next) => {
+	try {
+		courriel = new Courriel();
+		courriel.id = req.params.id;
+		courriel.courriel_lu = "Y"
+		await courriel.update();
+		res.json({ 'success': true });
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
+
 router.get("/membre/:id/activites", async (req, res, next) => {
 	try {
 		let whereClause = new WhereClause('?? = ?', ['id_membre', req.params.id]);
@@ -134,6 +174,21 @@ router.get("/membre/:id/activites", async (req, res, next) => {
 		let activites = await Activite.find(whereClauseActivites);
 		res.json(activites);
 	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
+router.get("/membre/:id/courriels", async (req, res) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id_destinataire', req.params.id]);
+		let result_courriel = await Courriel.find(whereClause);
+		if (result_courriel.length == 0) {
+			res.json({ 'success': false });
+		} else {
+			res.json(result_courriel);
+		}
+	} catch (e) {
+		console.log(e)
 		res.json({ 'success': false });
 	}
 });
