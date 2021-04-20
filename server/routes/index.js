@@ -138,6 +138,23 @@ router.get("/membre/:id/activites", async (req, res, next) => {
 	}
 });
 
+router.get("/activite/:id/membres", async (req, res, next) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id_activite', req.params.id]);
+		let result_id_memb = await Participe.find(whereClause);
+		let array_id_membre = [];
+		for (element of result_id_memb) {
+			array_id_membre.push(element.id_membre);
+		}
+		liste_id_membre = "(" + array_id_membre.join(",") + ")";
+		let whereClausemembres = new WhereClause('id IN ' + liste_id_membre, []);
+		let membres = await Membre.find(whereClausemembres);
+		res.json(membres);
+	} catch (e) {
+		res.json({ 'success': false });
+	}
+});
+
 router.post("/membre/inscrire", async (req, res, next) => {
 	try {
 		let participe = new Participe();
