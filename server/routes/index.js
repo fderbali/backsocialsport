@@ -160,7 +160,6 @@ router.get("/courriel/:id/mark_as_read", async (req, res, next) => {
 	}
 });
 
-
 router.get("/membre/:id/activites", async (req, res, next) => {
 	try {
 		let whereClause = new WhereClause('?? = ?', ['id_membre', req.params.id]);
@@ -189,6 +188,20 @@ router.get("/membre/:id/courriels", async (req, res) => {
 		}
 	} catch (e) {
 		console.log(e)
+		res.json({ 'success': false });
+	}
+});
+
+router.get("/membre/:id/sentcourriels", async (req, res) => {
+	try {
+		let whereClause = new WhereClause('?? = ?', ['id_expediteur', req.params.id]);
+		let result_courriel = await Courriel.find(whereClause);
+		if (result_courriel.length == 0) {
+			res.json({ 'success': false });
+		} else {
+			res.json(result_courriel);
+		}
+	} catch (e) {
 		res.json({ 'success': false });
 	}
 });
